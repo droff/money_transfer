@@ -62,7 +62,6 @@ describe WHOP::Bank do
     let(:account) { create(:account, balance: 1) }
     let(:amount) { 100 }
     let(:body) { { whop_bank_token: WHOP::Bank::DEPOSIT_TOKENS[amount], amount: amount } }
-    let(:wrong_body) { { whop_bank_token: WHOP::Bank::DEPOSIT_TOKENS[10], amount: 10 } }
     let(:uri) { "#{WHOP::Client::API_URL}/deposit" }
 
     it 'deposits money' do
@@ -93,6 +92,43 @@ describe WHOP::Bank do
 
       expect(http_call).to have_been_made.once
       expect(account.balance).to eq(1)
+    end
+  end
+
+  describe '.withdraw' do
+    let(:account) { create(:account, balance: 100) }
+    let(:amount) { 50 }
+    let(:body) { { whop_bank_token: WHOP::Bank::WITHDRAW_TOKENS[amount], amount: amount } }
+    let(:uri) { "#{WHOP::Client::API_URL}/withdraw" }
+
+    it 'withdraws money' do
+      http_call = stub_request(:post, uri)
+        .with(body: body, headers: { 'Content-Type': 'application/json' })
+        .to_return(status: 200)
+
+      described_class.withdraw(account: account, amount: amount)
+
+      expect(http_call).to have_been_made.once
+      expect(account.balance).to eq(50)
+    end
+
+    it 'raises with invalid token' do
+      expect {
+        described_class.withdraw(account: account, amount: 10)
+      }.to raise_error(WHOP::Errors::InvalidToken)
+
+      expect(account.balance).to eq(100)
+    end
+
+    it 'keeps balance untouched if client returns an error' do
+      http_call = stub_request(:post, uri)
+        .with(body: body, headers: { 'Content-Type': 'application/json' })
+        .to_return(status: 500)
+
+      described_class.withdraw(account: account, amount: 50)
+
+      expect(http_call).to have_been_made.once
+      expect(account.balance).to eq(100)
     end
   end
 end

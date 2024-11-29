@@ -5,4 +5,5 @@ Rails.application.routes.draw do
   post 'create_account' => 'api/v1/accounts#create'
   post '/transfer' => 'api/v1/accounts#transfer'
   post '/deposit' => 'api/v1/accounts#deposit'
+  post '/withdraw' => 'api/v1/accounts#withdraw'
 end

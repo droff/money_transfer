@@ -38,6 +38,14 @@ class API::V1::AccountsController < APIController
     render_error 'Invalid bank token'
   end
 
+  def withdraw
+    WHOP::Bank.withdraw(account: current_account, amount: amount)
+
+    render json: { message: 'Withdrawal successful', balance: current_account.balance }
+  rescue WHOP::Errors::InvalidToken
+    render_error 'Invalid bank token'
+  end
+
   private
 
   def account_params

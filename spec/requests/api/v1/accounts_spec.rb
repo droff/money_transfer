@@ -107,4 +107,36 @@ describe '/api/v1/accounts', type: :request do
       )
     end
   end
+
+  describe 'POST /withdraw' do
+    let(:amount) { 50 }
+    let(:withdraw_params) { { whop_bank_token: WHOP::Bank::WITHDRAW_TOKENS[amount], amount: amount } }
+    let(:uri) { "#{WHOP::Client::API_URL}/withdraw" }
+
+    before do
+      account.update(balance: 100)
+      stub_request(:post, uri)
+        .with(body: withdraw_params, headers: { 'Content-Type': 'application/json' })
+        .to_return(status: 200)
+    end
+
+    it 'withdraws money' do
+      post '/withdraw', params: withdraw_params, headers: headers
+
+      expect(response).to have_http_status(200)
+      expect(response.parsed_body).to eq(
+        'message' => 'Withdrawal successful',
+        'balance' => account.reload.balance
+      )
+    end
+
+    it 'returns an error for wrong token' do
+      post '/withdraw', params: { whop_bank_token: 'invalid-token', amount: 10 }, headers: headers
+
+      expect(response).to have_http_status(400)
+      expect(response.parsed_body).to eq(
+        'error' => 'Invalid bank token'
+      )
+    end
+  end
 end

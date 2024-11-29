@@ -28,5 +28,15 @@ class WHOP::Bank
         account.deposit(amount)
       end
     end
+
+    def withdraw(account:, amount:)
+      raise WHOP::Errors::ValidationError if account.nil? || !amount.is_a?(Numeric)
+      raise WHOP::Errors::InvalidToken unless WITHDRAW_TOKENS[amount]
+
+      client = WHOP::Client.init
+      if client.withdraw(WITHDRAW_TOKENS[amount], amount)
+        account.withdraw(amount)
+      end
+    end
   end
 end
