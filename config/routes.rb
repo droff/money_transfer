@@ -4,4 +4,5 @@ Rails.application.routes.draw do
   # accounts
   get 'me' => 'api/v1/accounts#me'
   post 'create_account' => 'api/v1/accounts#create'
+  post '/transfer' => 'api/v1/accounts#transfer'
 end

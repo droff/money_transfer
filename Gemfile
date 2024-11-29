@@ -42,6 +42,7 @@ gem 'thruster', require: false
 
 # https://github.com/rails-api/active_model_serializers/pull/2482
 gem 'active_model_serializers', github: 'rails-api/active_model_serializers', branch: '0-10-stable'
+gem 'rest-client'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -64,4 +65,5 @@ end
 group :test do
   gem 'rspec'
   gem 'rspec-rails'
+  gem 'webmock'
 end

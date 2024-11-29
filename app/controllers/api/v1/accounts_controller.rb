@@ -1,5 +1,5 @@
 class API::V1::AccountsController < APIController
-  before_action :check_current_account, only: [ :me ]
+  before_action :check_current_account, except: :create
 
   def me
     render json: current_account
