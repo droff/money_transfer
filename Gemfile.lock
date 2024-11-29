@@ -106,6 +106,10 @@ GEM
       bigdecimal
       rexml
     crass (1.0.6)
+    database_cleaner-active_record (2.2.0)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0.0)
+    database_cleaner-core (2.0.1)
     date (3.4.0)
     debug (1.9.2)
       irb (~> 1.10)
@@ -396,6 +400,7 @@ DEPENDENCIES
   active_model_serializers!
   bootsnap
   brakeman
+  database_cleaner-active_record
   debug
   factory_bot_rails
   importmap-rails

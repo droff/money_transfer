@@ -1,6 +1,4 @@
 class Account < ApplicationRecord
-  class InsufficientBalanceError < StandardError; end
-
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
 
@@ -9,7 +7,7 @@ class Account < ApplicationRecord
   end
 
   def withdraw(amount)
-    raise InsufficientBalanceError if amount > self.balance
+    raise WHOP::Errors::InsufficientBalance if amount > self.balance
     self.update(balance: self.balance - amount)
   end
 end

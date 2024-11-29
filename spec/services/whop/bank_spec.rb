@@ -24,7 +24,7 @@ describe WHOP::Bank do
           receiver_account: receiver_account,
           amount: 1_000_000
         )
-      }.to raise_error(Account::InsufficientBalanceError)
+      }.to raise_error(WHOP::Errors::InsufficientBalance)
     end
 
     it 'raises a validation error if sender account is empty' do
@@ -34,7 +34,7 @@ describe WHOP::Bank do
           receiver_account: receiver_account,
           amount: 10
         )
-      }.to raise_error(WHOP::Bank::ValidationError)
+      }.to raise_error(WHOP::Errors::ValidationError)
     end
 
     it 'raises a validation error if receiver account is empty' do
@@ -44,7 +44,7 @@ describe WHOP::Bank do
           receiver_account: nil,
           amount: 10
         )
-      }.to raise_error(WHOP::Bank::ValidationError)
+      }.to raise_error(WHOP::Errors::ValidationError)
     end
 
     it 'raises a validation error if amount less that 1' do
@@ -54,7 +54,45 @@ describe WHOP::Bank do
           receiver_account: receiver_account,
           amount: -100
         )
-      }.to raise_error(WHOP::Bank::ValidationError)
+      }.to raise_error(WHOP::Errors::ValidationError)
+    end
+  end
+
+  describe '.deposit' do
+    let(:account) { create(:account, balance: 1) }
+    let(:amount) { 100 }
+    let(:body) { { whop_bank_token: WHOP::Bank::DEPOSIT_TOKENS[amount], amount: amount } }
+    let(:wrong_body) { { whop_bank_token: WHOP::Bank::DEPOSIT_TOKENS[10], amount: 10 } }
+    let(:uri) { "#{WHOP::Client::API_URL}/deposit" }
+
+    it 'deposits money' do
+      http_call = stub_request(:post, uri)
+        .with(body: body, headers: { 'Content-Type': 'application/json' })
+        .to_return(status: 200)
+
+      described_class.deposit(account: account, amount: amount)
+
+      expect(http_call).to have_been_made.once
+      expect(account.balance).to eq(101)
+    end
+
+    it 'raises with invalid token' do
+      expect {
+        described_class.deposit(account: account, amount: 10)
+      }.to raise_error(WHOP::Errors::InvalidToken)
+
+      expect(account.balance).to eq(1)
+    end
+
+    it 'keeps balance untouched if client returns an error' do
+      http_call = stub_request(:post, uri)
+        .with(body: body, headers: { 'Content-Type': 'application/json' })
+        .to_return(status: 500)
+
+      described_class.deposit(account: account, amount: amount)
+
+      expect(http_call).to have_been_made.once
+      expect(account.balance).to eq(1)
     end
   end
 end

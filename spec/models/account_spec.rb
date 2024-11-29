@@ -45,7 +45,7 @@ describe Account do
     end
 
     it 'raises an error on insufficient balance' do
-      expect { subject.withdraw(300) }.to raise_error(Account::InsufficientBalanceError)
+      expect { subject.withdraw(300) }.to raise_error(WHOP::Errors::InsufficientBalance)
       expect(subject.balance).to eq(100)
     end
   end

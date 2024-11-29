@@ -1,11 +1,10 @@
 require 'rails_helper'
 
 describe '/api/v1/accounts', type: :request do
-  let(:account_id) { 1 }
   let(:name) { 'John Doe' }
   let(:email) { 'john.doe@example.com' }
-  let(:account) { create(:account, name: name, email: email) }
-  let(:headers) { { APIController::X_SECURE_USER_ID => account_id } }
+  let(:account) { create(:account, id: 1, name: name, email: email) }
+  let(:headers) { { APIController::X_SECURE_USER_ID => account.id } }
 
   describe 'GET /me' do
     before { account }
@@ -16,7 +15,7 @@ describe '/api/v1/accounts', type: :request do
       expect(response).to have_http_status(200)
       expect(response.content_type).to start_with('application/json')
       expect(response.parsed_body).to eq(
-        'id' => 1,
+        'id' => account.id,
         'name' => name,
         'email' => email,
         'balance' => 0
@@ -74,6 +73,37 @@ describe '/api/v1/accounts', type: :request do
       expect(response).to have_http_status(400)
       expect(response.parsed_body).to eq(
         'error' => 'Insufficient balance'
+      )
+    end
+  end
+
+  describe 'POST /deposit' do
+    let(:amount) { 100 }
+    let(:deposit_params) { { whop_bank_token: WHOP::Bank::DEPOSIT_TOKENS[amount], amount: amount } }
+    let(:uri) { "#{WHOP::Client::API_URL}/deposit" }
+
+    before do
+      stub_request(:post, uri)
+        .with(body: deposit_params, headers: { 'Content-Type': 'application/json' })
+        .to_return(status: 200)
+    end
+
+    it 'deposits money' do
+      post '/deposit', params: deposit_params, headers: headers
+
+      expect(response).to have_http_status(200)
+      expect(response.parsed_body).to eq(
+        'message' => 'Deposit successful',
+        'balance' => account.reload.balance
+      )
+    end
+
+    it 'returns an error for wrong token' do
+      post '/deposit', params: { whop_bank_token: 'invalid-token', amount: 10 }, headers: headers
+
+      expect(response).to have_http_status(400)
+      expect(response.parsed_body).to eq(
+        'error' => 'Invalid bank token'
       )
     end
   end
