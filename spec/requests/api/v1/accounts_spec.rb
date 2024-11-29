@@ -6,6 +6,17 @@ describe '/api/v1/accounts', type: :request do
   let(:account) { create(:account, id: 1, name: name, email: email) }
   let(:headers) { { APIController::X_SECURE_USER_ID => account.id } }
 
+  describe 'check header' do
+    it 'returns forbidden error if current account not found' do
+      get '/me', params: {}, headers: { APIController::X_SECURE_USER_ID => 1_000_000 }
+
+      expect(response).to have_http_status(403)
+      expect(response.parsed_body).to eq(
+        'error' => 'Forbidden'
+      )
+    end
+  end
+
   describe 'GET /me' do
     before { account }
 
@@ -79,7 +90,7 @@ describe '/api/v1/accounts', type: :request do
 
   describe 'POST /deposit' do
     let(:amount) { 100 }
-    let(:deposit_params) { { whop_bank_token: WHOP::Bank::DEPOSIT_TOKENS[amount], amount: amount } }
+    let(:deposit_params) { { whop_bank_token: WHOP::Bank::DEPOSIT_TOKENS[amount], amount: amount.to_s } }
     let(:uri) { "#{WHOP::Client::API_URL}/deposit" }
 
     before do
@@ -99,7 +110,7 @@ describe '/api/v1/accounts', type: :request do
     end
 
     it 'returns an error for wrong token' do
-      post '/deposit', params: { whop_bank_token: 'invalid-token', amount: 10 }, headers: headers
+      post '/deposit', params: { whop_bank_token: 'invalid-token', amount: '10' }, headers: headers
 
       expect(response).to have_http_status(400)
       expect(response.parsed_body).to eq(
@@ -110,7 +121,7 @@ describe '/api/v1/accounts', type: :request do
 
   describe 'POST /withdraw' do
     let(:amount) { 50 }
-    let(:withdraw_params) { { whop_bank_token: WHOP::Bank::WITHDRAW_TOKENS[amount], amount: amount } }
+    let(:withdraw_params) { { whop_bank_token: WHOP::Bank::WITHDRAW_TOKENS[amount], amount: amount.to_s } }
     let(:uri) { "#{WHOP::Client::API_URL}/withdraw" }
 
     before do
@@ -131,7 +142,7 @@ describe '/api/v1/accounts', type: :request do
     end
 
     it 'returns an error for wrong token' do
-      post '/withdraw', params: { whop_bank_token: 'invalid-token', amount: 10 }, headers: headers
+      post '/withdraw', params: { whop_bank_token: 'invalid-token', amount: '10' }, headers: headers
 
       expect(response).to have_http_status(400)
       expect(response.parsed_body).to eq(

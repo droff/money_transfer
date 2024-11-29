@@ -28,8 +28,6 @@ class API::V1::AccountsController < APIController
     }
   rescue WHOP::Errors::InsufficientBalance
     render_error 'Insufficient balance'
-  rescue WHOP::Errors::ValidationError
-    render_error 'Validation error'
   end
 
   def deposit

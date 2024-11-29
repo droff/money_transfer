@@ -6,8 +6,8 @@ describe WHOP::Client do
   let(:whop_bank_token) { '0XZ1JHd6ICZpxWY2JCLwADMxojI5FGblRmIsICMwEjI6ICduV3btFmIsICdpN3bwVGZiojIlBXe0Jye' }
   let(:invalid_token) { '9V2csFmZ6ICZpxWY2JCLwATN6ISehxWZkJCLiADMxIiOiQnb19WbhJCLicXYyRGa0l2diojIlBXe0Jye' }
   let(:amount) { 100 }
-  let(:body) { { whop_bank_token: whop_bank_token, amount: amount }.to_json }
-  let(:invalid_body) { { whop_bank_token: invalid_token, amount: 1 }.to_json }
+  let(:body) { { whop_bank_token: whop_bank_token, amount: amount.to_s }.to_json }
+  let(:invalid_body) { { whop_bank_token: invalid_token, amount: '1' }.to_json }
   let(:headers) { { 'Content-Type' => 'application/json' } }
 
   describe '#deposit' do

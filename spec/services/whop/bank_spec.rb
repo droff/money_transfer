@@ -61,7 +61,7 @@ describe WHOP::Bank do
   describe '.deposit' do
     let(:account) { create(:account, balance: 1) }
     let(:amount) { 100 }
-    let(:body) { { whop_bank_token: WHOP::Bank::DEPOSIT_TOKENS[amount], amount: amount } }
+    let(:body) { { whop_bank_token: WHOP::Bank::DEPOSIT_TOKENS[amount], amount: amount.to_s } }
     let(:uri) { "#{WHOP::Client::API_URL}/deposit" }
 
     it 'deposits money' do
@@ -98,7 +98,7 @@ describe WHOP::Bank do
   describe '.withdraw' do
     let(:account) { create(:account, balance: 100) }
     let(:amount) { 50 }
-    let(:body) { { whop_bank_token: WHOP::Bank::WITHDRAW_TOKENS[amount], amount: amount } }
+    let(:body) { { whop_bank_token: WHOP::Bank::WITHDRAW_TOKENS[amount], amount: amount.to_s } }
     let(:uri) { "#{WHOP::Client::API_URL}/withdraw" }
 
     it 'withdraws money' do

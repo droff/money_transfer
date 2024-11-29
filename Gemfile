@@ -66,5 +66,6 @@ group :test do
   gem 'database_cleaner-active_record'
   gem 'rspec'
   gem 'rspec-rails'
+  gem 'simplecov', require: false
   gem 'webmock'
 end
