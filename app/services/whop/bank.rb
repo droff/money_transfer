@@ -7,6 +7,7 @@ class WHOP::Bank
   WITHDRAW_TOKENS = {
     50 => '9VWdyRnOiQWasFmdiwCMzojI5FGblRmIsICM1IiOiQnb19WbhJCLicXYyRGa0l2diojIlBXe0Jye'
   }.freeze
+
   class << self
     def transfer(sender_account:, receiver_account:, amount:)
       if sender_account.nil? || receiver_account.nil? || !amount.is_a?(Numeric) || amount < 1

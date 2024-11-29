@@ -17,7 +17,7 @@ class API::V1::AccountsController < APIController
 
   def transfer
     receiver_account = Account.find_by(id: params[:receiver_user_id])
-    render_error('Receiver account not found') unless receiver_account
+    return render_error('Receiver account not found') unless receiver_account
 
     WHOP::Bank.transfer(sender_account: current_account, receiver_account: receiver_account, amount: amount)
 
@@ -28,6 +28,8 @@ class API::V1::AccountsController < APIController
     }
   rescue WHOP::Errors::InsufficientBalance
     render_error 'Insufficient balance'
+  rescue WHOP::Errors::ValidationError
+    render_error 'Validation error'
   end
 
   def deposit
@@ -54,9 +56,5 @@ class API::V1::AccountsController < APIController
 
   def amount
     params[:amount] && params[:amount].to_i
-  end
-
-  def whop_bank_token
-    params[:whop_bank_token]
   end
 end

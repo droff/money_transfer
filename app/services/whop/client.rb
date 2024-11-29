@@ -11,7 +11,7 @@ class WHOP::Client
   end
 
   def deposit(whop_bank_token, amount)
-    payload = { whop_bank_token: whop_bank_token, amount: amount }
+    payload = { whop_bank_token: whop_bank_token, amount: amount.to_s }
     client['/deposit'].post(payload.to_json)
     true
   rescue
@@ -19,7 +19,7 @@ class WHOP::Client
   end
 
   def withdraw(whop_bank_token, amount)
-    payload = { whop_bank_token: whop_bank_token, amount: amount }
+    payload = { whop_bank_token: whop_bank_token, amount: amount.to_s }
     client['/withdraw'].post(payload.to_json)
     true
   rescue
