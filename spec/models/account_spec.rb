@@ -23,4 +23,30 @@ describe Account do
       expect(account.valid?).to be_falsey
     end
   end
+
+  describe '#deposit' do
+    subject { create(:account, balance: 1) }
+
+    it 'deposits money into an account' do
+      subject.deposit(100)
+      subject.deposit(200)
+      expect(subject.balance).to eq(301)
+    end
+  end
+
+  describe '#withdraw' do
+    subject { create(:account, balance: 100) }
+
+    it 'withdraws money from an account' do
+      subject.withdraw(10)
+      subject.withdraw(20)
+
+      expect(subject.balance).to eq(70)
+    end
+
+    it 'raises an error on insufficient balance' do
+      expect { subject.withdraw(300) }.to raise_error(Account::InsufficientBalanceError)
+      expect(subject.balance).to eq(100)
+    end
+  end
 end

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-describe WHOP::Bank do
-  subject { described_class.client }
+describe WHOP::Client do
+  subject { described_class.init }
 
   let(:whop_bank_token) { '0XZ1JHd6ICZpxWY2JCLwADMxojI5FGblRmIsICMwEjI6ICduV3btFmIsICdpN3bwVGZiojIlBXe0Jye' }
   let(:invalid_token) { '9V2csFmZ6ICZpxWY2JCLwATN6ISehxWZkJCLiADMxIiOiQnb19WbhJCLicXYyRGa0l2diojIlBXe0Jye' }
