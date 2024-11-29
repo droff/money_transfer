@@ -11,18 +11,18 @@ class API::V1::AccountsController < APIController
     if account.save
       render json: account
     else
-      render json: account.errors, status: :bad_request
+      render_error(account.errors)
     end
   end
 
   def transfer
     receiver_account = Account.find_by(id: params[:receiver_user_id])
-    render(json: { error: 'Receiver account not found' }, status: :bad_request) unless receiver_account
+    render_error('Receiver account not found') unless receiver_account
 
     WHOP::Bank.transfer(
       sender_account: current_account,
       receiver_account: receiver_account,
-      amount: params[:amount]
+      amount: amount
     )
 
     render json: {
@@ -31,12 +31,16 @@ class API::V1::AccountsController < APIController
       receiver_balance: receiver_account.balance
     }
   rescue Account::InsufficientBalanceError
-    render json: { error: 'Insufficient balance' }, status: :bad_request
+    render_error('Insufficient balance')
   end
 
   private
 
   def account_params
     params.permit(:name, :email)
+  end
+
+  def amount
+    params[:amount] && params[:amount].to_i
   end
 end

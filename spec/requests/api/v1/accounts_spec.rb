@@ -46,7 +46,34 @@ describe '/api/v1/accounts', type: :request do
       expect(response).to have_http_status(400)
       expect(response.content_type).to start_with('application/json')
       expect(response.parsed_body).to eq(
-        'email' => [ 'has already been taken' ]
+        'error' => { 'email' => [ 'has already been taken' ] }
+      )
+    end
+  end
+
+  describe 'POST /transfer' do
+    let(:receiver_account) { create(:account, id: 2, name: 'Receiver', email: 'receiver@example.com') }
+    let(:transfer_params) { { receiver_user_id: receiver_account.id, amount: 50 } }
+
+    it 'transfers money' do
+      account.update(balance: 100)
+      post '/transfer', params: transfer_params, headers: headers
+
+      expect(response).to have_http_status(200)
+      expect(response.parsed_body).to eq(
+        'message' => 'Transfer successful',
+        'sender_balance' => account.reload.balance,
+        'receiver_balance' => receiver_account.reload.balance
+      )
+    end
+
+    it 'returns an error for insufficient balance' do
+      account.update(balance: 0)
+      post '/transfer', params: transfer_params, headers: headers
+
+      expect(response).to have_http_status(400)
+      expect(response.parsed_body).to eq(
+        'error' => 'Insufficient balance'
       )
     end
   end

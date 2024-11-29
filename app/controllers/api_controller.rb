@@ -18,4 +18,8 @@ class APIController < ApplicationController
   def user_id
     request.headers[X_SECURE_USER_ID]
   end
+
+  def render_error(message)
+    render json: { error: message }, status: :bad_request
+  end
 end
