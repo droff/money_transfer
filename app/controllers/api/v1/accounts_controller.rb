@@ -23,8 +23,8 @@ class API::V1::AccountsController < APIController
 
     render json: {
       message: 'Transfer successful',
-      sender_balance: current_account.balance,
-      receiver_balance: receiver_account.balance
+      sender_balance: current_account.balance.to_f,
+      receiver_balance: receiver_account.balance.to_f
     }
   rescue WHOP::Errors::InsufficientBalance
     render_error 'Insufficient balance'
@@ -33,7 +33,7 @@ class API::V1::AccountsController < APIController
   def deposit
     WHOP::Bank.deposit(account: current_account, amount: amount)
 
-    render json: { message: 'Deposit successful', balance: current_account.balance }
+    render json: { message: 'Deposit successful', balance: current_account.balance.to_f }
   rescue WHOP::Errors::InvalidToken
     render_error 'Invalid bank token'
   end
@@ -41,7 +41,7 @@ class API::V1::AccountsController < APIController
   def withdraw
     WHOP::Bank.withdraw(account: current_account, amount: amount)
 
-    render json: { message: 'Withdrawal successful', balance: current_account.balance }
+    render json: { message: 'Withdrawal successful', balance: current_account.balance.to_f }
   rescue WHOP::Errors::InvalidToken
     render_error 'Invalid bank token'
   end

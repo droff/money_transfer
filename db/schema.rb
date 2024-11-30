@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_29_181836) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_30_011217) do
   create_table "accounts", force: :cascade do |t|
     t.string "name", null: false
     t.string "email", null: false
-    t.integer "balance", default: 0
+    t.decimal "balance", precision: 10, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
