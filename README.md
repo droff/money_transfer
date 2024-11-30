@@ -1,24 +1,29 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Setup
 
-Things you may want to cover:
+```sh
+bundle install
+rails db:create
+rails db:migrate
+rails db:seed
+```
 
-* Ruby version
+## Run
 
-* System dependencies
+```sh
+# server
+rails s
 
-* Configuration
+# console
+rails c
+```
 
-* Database creation
+## Test
 
-* Database initialization
+```sh
+rspec
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+# linter
+rubocop
+```
