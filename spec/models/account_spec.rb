@@ -27,7 +27,7 @@ describe Account do
   describe '#deposit' do
     subject { create(:account, balance: 1) }
 
-    it 'deposits money into an account' do
+    it 'puts money into an account' do
       subject.deposit(100)
       subject.deposit(200)
       expect(subject.balance).to eq(301)
@@ -37,14 +37,14 @@ describe Account do
   describe '#withdraw' do
     subject { create(:account, balance: 100) }
 
-    it 'withdraws money from an account' do
+    it 'gets money from an account' do
       subject.withdraw(10)
       subject.withdraw(20)
 
       expect(subject.balance).to eq(70)
     end
 
-    it 'raises an error on insufficient balance' do
+    it 'raises an insufficient balance error' do
       expect { subject.withdraw(300) }.to raise_error(WHOP::Errors::InsufficientBalance)
       expect(subject.balance).to eq(100)
     end

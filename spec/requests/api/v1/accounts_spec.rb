@@ -7,7 +7,7 @@ describe '/api/v1/accounts', type: :request do
   let(:headers) { { APIController::X_SECURE_USER_ID => account.id } }
 
   describe 'check header' do
-    it 'returns forbidden error if current account not found' do
+    it 'returns forbidden error if current account was not found' do
       get '/me', params: {}, headers: { APIController::X_SECURE_USER_ID => 1_000_000 }
 
       expect(response).to have_http_status(403)
@@ -77,7 +77,7 @@ describe '/api/v1/accounts', type: :request do
       )
     end
 
-    it 'returns an error for insufficient balance' do
+    it 'returns an insufficient balance error' do
       account.update(balance: 0)
       post '/transfer', params: transfer_params, headers: headers
 
@@ -99,7 +99,7 @@ describe '/api/v1/accounts', type: :request do
         .to_return(status: 200)
     end
 
-    it 'deposits money' do
+    it 'puts money' do
       post '/deposit', params: deposit_params, headers: headers
 
       expect(response).to have_http_status(200)
@@ -109,7 +109,7 @@ describe '/api/v1/accounts', type: :request do
       )
     end
 
-    it 'returns an error for wrong token' do
+    it 'returns an invalid token error' do
       post '/deposit', params: { whop_bank_token: 'invalid-token', amount: '10' }, headers: headers
 
       expect(response).to have_http_status(400)
@@ -131,7 +131,7 @@ describe '/api/v1/accounts', type: :request do
         .to_return(status: 200)
     end
 
-    it 'withdraws money' do
+    it 'gets money' do
       post '/withdraw', params: withdraw_params, headers: headers
 
       expect(response).to have_http_status(200)
@@ -141,7 +141,7 @@ describe '/api/v1/accounts', type: :request do
       )
     end
 
-    it 'returns an error for wrong token' do
+    it 'returns an invalid token error' do
       post '/withdraw', params: { whop_bank_token: 'invalid-token', amount: '10' }, headers: headers
 
       expect(response).to have_http_status(400)

@@ -83,7 +83,7 @@ describe WHOP::Bank do
       expect(account.balance).to eq(1)
     end
 
-    it 'keeps balance untouched if client returns an error' do
+    it 'keeps balance untouched if bank api returns an error' do
       http_call = stub_request(:post, uri)
         .with(body: body, headers: { 'Content-Type': 'application/json' })
         .to_return(status: 500)
@@ -120,7 +120,7 @@ describe WHOP::Bank do
       expect(account.balance).to eq(100)
     end
 
-    it 'keeps balance untouched if client returns an error' do
+    it 'keeps balance untouched if bank api returns an error' do
       http_call = stub_request(:post, uri)
         .with(body: body, headers: { 'Content-Type': 'application/json' })
         .to_return(status: 500)
